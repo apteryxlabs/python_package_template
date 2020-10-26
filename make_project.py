@@ -92,8 +92,7 @@ setup(
         f.write(setup_template)
 
 def make_install_scripts():
-    content = f'''
-\'''
+    content = f'''\'''
 Runs install steps on first import.
 \'''
 
@@ -111,6 +110,11 @@ if __name__ == '__main__':
 '''
     with open('./install_scripts.py', 'w') as f:
         f.write(content)
+
+    globals = f'''MESSAGE='Hello, world!'
+'''
+    with open(package_root / 'GLOBALS.py', 'w') as f:
+        f.write(globals)
 
 
 def init_empty(path):
