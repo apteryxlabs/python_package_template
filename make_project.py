@@ -38,7 +38,7 @@ def make_setup():
     author_email = input('Author email: ')
     description = input('Short description (~1 sentence): ')
     repo_url = check_output('git config --get remote.origin.url', shell=True).decode('utf-8').strip()
-    python_requires = float(input('Minimum required python version (e.g. "3.7"): '))
+    python_requires = input('Minimum required python version (e.g. "3.7"): ')
     keywords = input('Keywords (comma separated, with space. E.g. "fun, stuff, apteryx": ')
     project_website = input('Project website (leave blank if none): ')
 
@@ -91,6 +91,28 @@ setup(
     with open('setup.py', 'w') as f:
         f.write(setup_template)
 
+def make_install_scripts():
+    content = f'''
+\'''
+Runs install steps on first import.
+\'''
+
+import os
+
+
+from src.{package_name}.GLOBALS import (MESSAGE)
+
+def say_hi():
+    print(MESSAGE)
+
+if __name__ == '__main__':
+    print('Running post-install scripts!')
+    say_hi()
+'''
+    with open('./install_scripts.py', 'w') as f:
+        f.write(content)
+
+
 def init_empty(path):
     with open(path, 'w') as f:
         f.write('')
@@ -102,19 +124,18 @@ def init_w_txt(path, txt):
 if __name__ == '__main__':
 
     if TEST:
-        if os.path.exists(archive_root):
-            shutil.move(archive_root / 'make_project.py', '.')
-            shutil.rmtree(archive_root)
         if os.path.exists(package_root):
             shutil.rmtree(package_root)
             os.remove('./setup.py')
             os.remove('./setup.cfg')
+            os.remove('./')
 
-    ok = input(f'Will make a project with the following name:\n"{package_name}"\nOK? (y/n)')
+    ok = input(f'Will make a project with the following name:\n"{package_name}"\nOK? (y/n): ')
     proceed = ok.upper() in 'Y'
     if proceed:
         os.makedirs(package_root)
         make_setup()
+        make_install_scripts()
 
         #Make package __init__.py
         init_empty(package_root / '__init__.py')
